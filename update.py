@@ -32,21 +32,17 @@ def save_events(code: str, events):
     with open(f"{DB}/{code}.json", "w") as f:
         json.dump(events, f)
 
+def load_secrets():
+    with open("secrets.json", "r") as f:
+        return json.load(f)
+
 
 def discord_notif(message):
-    secrets = {}
-    with open("secrets.json", "r") as f:
-        secrets = json.load(f)
-    res = requests.post(
-        f"https://discord.com/api/webhooks/{secrets['endpoint']}/{secrets['token']}",
-        json={
-            "username": "SÚKLtrack",
-            "content": message,
-        }
-    )
-    if len(res.text) > 0:
-        print("discord_notif:", res.text)
-    time.sleep(1)
+    for url in load_secrets()['discord_webhooks']:
+        res = requests.post(url, json={ "username": "SÚKLtrack", "content": message })
+        if len(res.text) > 0:
+            print("discord_notif:", res.text)
+        time.sleep(1)
 
 
 def find_updates(old, new):
