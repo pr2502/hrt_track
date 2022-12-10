@@ -6,35 +6,24 @@ import requests
 import time
 
 
-DB = "./db"
-MEDS = [
-    # transmasc
-    ("0186652", "SUSTANON"),
-    ("0223477", "NEBIDO"),
-    # transfem
-    ("0186147", "NEOFOLLIN"),
-    ("0224641", "ANDROCUR 50MG"),
-    ("0225253", "ANDROCUR 100MG"),
-    ("0053797", "ESTROFEM 1MG"),
-    ("0096491", "ESTROFEM 2MG"),
-    ("0076922", "OESTROGEL"),
-]
-
-
 def load_events(code: str):
     try:
-        with open(f"{DB}/{code}.json", "r") as f:
+        with open(f"db/{code}.json", "r") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
 
 def save_events(code: str, events):
-    with open(f"{DB}/{code}.json", "w") as f:
+    with open(f"db/{code}.json", "w") as f:
         json.dump(events, f)
 
 def load_secrets():
     with open("secrets.json", "r") as f:
         return json.load(f)
+
+def load_meds():
+    with open("meds.json", "r") as f:
+        return json.load(f).items()
 
 
 def discord_notif(message):
@@ -56,7 +45,7 @@ def find_updates(old, new):
     return updates
 
 
-for code, name in MEDS:
+for code, name in load_meds():
     print(code, "...", end=" ")
     old = load_events(code)
     new = get_events(code)
