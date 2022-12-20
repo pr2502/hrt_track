@@ -46,12 +46,13 @@ def find_updates(old, new):
 
 
 for code, name in load_meds():
-    print(code, "...", end=" ")
+    print(code, f"({name})", "...", end=" ")
     old = load_events(code)
     new = get_events(code)
     updates = find_updates(old, new)
     if len(updates) > 0:
         for update in updates:
+            print("u", end="")
             message = f"{name} {update['event_type']} {update['start_date']}"
             if update["replacement"] is not None:
                 message += f", náhrada: '{update['replacement']}'"
@@ -60,6 +61,7 @@ for code, name in load_meds():
             if update["expected_return"] is not None:
                 message += f", očekávané obnovení {update['expected_return']}"
             discord_notif(message)
+        print(" ", end="")
     save_events(code, new)
     print("done")
 
